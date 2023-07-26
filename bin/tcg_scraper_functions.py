@@ -20,7 +20,7 @@ import time
 from selenium.common.exceptions import TimeoutException
 
 # Load the Logging Configuration File
-logging.config.fileConfig(fname='/Users/imranmahmood/OnePieceDE/util/logging_to_file.conf')
+logging.config.fileConfig(fname='util/logging_to_file.conf')
 
 # Get the custom Logger from Configuration File
 logger = logging.getLogger(__name__)

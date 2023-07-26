@@ -5,7 +5,7 @@ import os
 import logging
 import logging.config
 
-logging.config.fileConfig(fname='/Users/imranmahmood/OnePieceDE/util/logging_to_file.conf')
+logging.config.fileConfig(fname='util/logging_to_file.conf')
 logger = logging.getLogger(__name__)
 
 def upload_file(file_name, bucket, object_name=None):
