@@ -291,6 +291,14 @@ def get_card_data(elements, driver, date):
 
                 # navigate back to the original page
                 driver.back()
+            except TimeoutException as e:
+                attempts += 1
+                logging.error(f'Error with get_card_data() method: {e}')
+                if attempts >= max_attempts:
+                    raise e
+                else:
+                    logging.info(f'Retrying attempt: {attempts}...')
+                    wait_time += 1
             except AttributeError as e:
                 attempts += 1
                 logging.error(f'Error with get_card_data() method: {e}')
