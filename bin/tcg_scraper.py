@@ -18,7 +18,7 @@ def main():
     """
     try:
         print("executing script")
-        bucket = 'optcg-pipeline'
+        bucket = os.getenv('S3_OPTCG_BUCKET_NAME')
         logging.info("Executing main function.")
         current_dir = os.path.dirname(os.path.abspath(__file__))
         parent_dir = os.path.dirname(current_dir) # gets parent directory for saving the file
