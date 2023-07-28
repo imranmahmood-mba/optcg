@@ -95,8 +95,8 @@ def create_driver():
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.set_capability("browserVersion", "98")
 
-        webdriver_service = Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=webdriver_service, options=chrome_options)
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager(version='114.0.5735.90').install()), options=chrome_options)
+
 
     except Exception as e:
         logger.error(f"Failed to start the Chrome driver. Exception: {e}")
