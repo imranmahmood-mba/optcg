@@ -196,10 +196,6 @@ def get_max_page_number(driver):
             logging.error(f"Error in the method get_max_page_number(): {e}")
             raise e 
 
-def card_link_list(url, date):
-    url_dict = {'url': url, 'date': date}
-    write_csv('logs/card_link_list.csv', [url_dict])
-
 def get_card_data(elements, driver, date):
     """
     Get the card data from a list of elements.
@@ -220,9 +216,10 @@ def get_card_data(elements, driver, date):
         card_data = get_card_data(elements, driver, '2021-10-01') """
     
     logging.info("Getting card data...")
-    card_list=[]
+    card_list = []
+    url_list = []
 
-    wait_time = 15
+    wait_time = 10
     attempts = 0
     max_attempts = 3
     scraped_cards_file_path = 'logs/card_link_list.csv'
@@ -283,7 +280,6 @@ def get_card_data(elements, driver, date):
                 
                 prices_section = soup.find('section', class_='price-points price-guide__points')
                 scraped_prices = [pp.convert_to_number(span.text) for span in prices_section.find_all('span', class_='price')]
-                #prices = [pp.convert_to_number(price.text) for price in scraped_prices]
                 logging.info("Prices collected...")
                 
                 card_type = pp.get_card_type(product_name)
@@ -311,8 +307,7 @@ def get_card_data(elements, driver, date):
                 card_list.append(card) # add the dictionary containing all of the card data to the card_list variable 
 
                 # save link of the element
-                #card_link=elements[i].get_attribute('href')
-                card_link_list(url=card_link, date=date)
+                url_list.append({'url':card_link, 'date':date})
 
                 # navigate back to the original page
                 driver.back()
@@ -341,7 +336,7 @@ def get_card_data(elements, driver, date):
                 raise e
             else:
                 logging.info(f"Card data was successfully scraped for {len(card_list)} cards.")
-        return card_list
+        return card_list, url_list
     
 
     

@@ -23,7 +23,8 @@ def main():
         current_dir = os.path.dirname(os.path.abspath(__file__))
         parent_dir = os.path.dirname(current_dir) # gets parent directory for saving the file
         file_date, date_column = tcg.get_todays_date() 
-        file_path = f'{parent_dir}/output/optcg_data_{file_date}.csv'
+        data_file_path = f'{parent_dir}/output/optcg_data_{file_date}.csv'
+        url_file_path = 'logs/card_link_list.csv'
 
         driver = tcg.create_driver()
         elements = tcg.download_elements_from_webpage(driver, url="https://www.tcgplayer.com/search/one-piece-card-game/product?productLineName=one-piece-card-game&page=1&view=grid&ProductTypeName=Cards")
@@ -32,8 +33,9 @@ def main():
         for page in page_nums:
             url = f"https://www.tcgplayer.com/search/one-piece-card-game/product?productLineName=one-piece-card-game&page={page}&view=grid&ProductTypeName=Cards"
             elements = tcg.download_elements_from_webpage(driver, url=url) # get the webpage elements to scrape
-            card_data = tcg.get_card_data(elements, driver, date_column) # scrape card data from page
-            tcg.write_csv(file_path, card_data)
+            card_data,urls = tcg.get_card_data(elements, driver, date_column) # scrape card data from page
+            tcg.write_csv(data_file_path, card_data)
+            tcg.write_csv(url_file_path, urls) 
 
         # Validate the data 
         logging.info("Starting data validation...")
