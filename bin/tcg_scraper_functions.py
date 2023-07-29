@@ -222,10 +222,10 @@ def get_card_data(elements, driver, date):
     logging.info("Getting card data...")
     card_list=[]
 
-    wait_time = 12
+    wait_time = 15
     attempts = 0
     max_attempts = 3
-    scraped_cards_file_path = 'logs/scraped_cards.csv'
+    scraped_cards_file_path = 'logs/card_link_list.csv'
 
     # check if link has already been scraped
     if not os.path.exists(scraped_cards_file_path):
@@ -243,18 +243,16 @@ def get_card_data(elements, driver, date):
     while attempts < max_attempts:
         for i in range(len(elements)):
             try:
-                # initiate empty dict to store card data
                 # find all the elements again to avoid StaleElementReferenceException
-                
                 wait = WebDriverWait(driver, wait_time)
                 elements = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.search-result__content > a")))
                 
-                #elements = driver.find_elements(By.CSS_SELECTOR, "div.search-result__content > a")
-
-                if elements[i].get_attribute('href') in list_of_values:
+                elements = driver.find_elements(By.CSS_SELECTOR, "div.search-result__content > a")
+                
+                card_link=elements[i].get_attribute('href')
+                if card_link in list_of_values:
                     logging.info(f"Link {elements[i].get_attribute('href')} has already been scraped.")
                     continue
-
 
                 # click on the element
                 elements[i].click()
@@ -313,26 +311,26 @@ def get_card_data(elements, driver, date):
                 card_list.append(card) # add the dictionary containing all of the card data to the card_list variable 
 
                 # save link of the element
-                card_link=elements[i].get_attribute('href')
+                #card_link=elements[i].get_attribute('href')
                 card_link_list(url=card_link, date=date)
 
                 # navigate back to the original page
                 driver.back()
             except TimeoutException as e:
                 attempts += 1
-                logging.error(f'Error with get_card_data() method: {e}')
                 if attempts >= max_attempts:
+                    logging.error(f'Error with get_card_data() method: {e}')
                     raise e
                 else:
-                    logging.info(f'Retrying attempt: {attempts}...')
+                    logging.info(f'Error with get_card_data() method: {e} - Retrying attempt: {attempts}...')
                     wait_time += 1
             except AttributeError as e:
                 attempts += 1
-                logging.error(f'Error with get_card_data() method: {e}')
                 if attempts >= max_attempts:
+                    logging.error(f'Error with get_card_data() method: {e}')
                     raise e
                 else:
-                    logging.info(f'Retrying attempt: {attempts}...')
+                    logging.info(f'Error with get_card_data() method: {e} - Retrying attempt: {attempts}...')
                     wait_time += 1
             except StaleElementReferenceException as e:
                 logging.error(f'Error with get_card_data() method: {e}')
