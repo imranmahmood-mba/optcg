@@ -39,7 +39,7 @@ def main():
 
         # Validate the data 
         logging.info("Starting data validation...")
-        df = pd.read_csv(file_path)
+        df = pd.read_csv(data_file_path)
         df_validator = vtcg.DataFrameValidator(df)
         df_validator.df_show_schema()
         df_validator.validate_lowest_price()
