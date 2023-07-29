@@ -198,7 +198,7 @@ def get_max_page_number(driver):
 
 def card_link_list(url, date):
     url_dict = {'url': url, 'date': date}
-    write_csv('/logs/card_link_list.csv', [url_dict])
+    write_csv('logs/card_link_list.csv', [url_dict])
 
 def get_card_data(elements, driver, date):
     """
@@ -225,6 +225,19 @@ def get_card_data(elements, driver, date):
     wait_time = 12
     attempts = 0
     max_attempts = 3
+    scraped_cards_file_path = 'logs/scraped_cards.csv'
+
+    # check if link has already been scraped
+    if not os.path.exists(scraped_cards_file_path):
+        # Create an empty DataFrame with desired columns and save it as csv
+        df = pd.DataFrame(columns=['date', 'url'])
+        df.to_csv(scraped_cards_file_path, index=False)
+        logging.info(f"New file created at {scraped_cards_file_path}.")
+
+    # Read file and get the scraped urls 
+    df = pd.read_csv(scraped_cards_file_path)
+    df = df[df['date'] == date]
+    list_of_values = pd.Series(df['url'])
 
     # iterate over each element and click on it
     while attempts < max_attempts:
@@ -238,10 +251,6 @@ def get_card_data(elements, driver, date):
                 
                 #elements = driver.find_elements(By.CSS_SELECTOR, "div.search-result__content > a")
 
-                # check if link has already been scraped
-                df = pd.read_csv('/logs/card_link_list.csv')
-                df = df[df['date'] == date]
-                list_of_values = pd.Series(df['url'])
                 if elements[i].get_attribute('href') in list_of_values:
                     logging.info(f"Link {elements[i].get_attribute('href')} has already been scraped.")
                     continue
