@@ -18,6 +18,7 @@ import tcg_data_preprocessing as pp
 import numpy as np
 import time
 from selenium.common.exceptions import TimeoutException
+import pandas as pd
 
 # Load the Logging Configuration File
 logging.config.fileConfig(fname='util/logging_to_file.conf')
@@ -142,7 +143,7 @@ def download_elements_from_webpage(driver, url):
             return elements
         except TimeoutException as e:
             attempts += 1
-            logging.error(f"Attempt {attempts} error in the method download_elements_from_webpage(): {e}")
+            logging.error(f"Attempt {attempts} error in the method download_elements_from_webpage(): {e} \n URL: {url}")
             if attempts >= max_attempts:
                 raise e
             else:
@@ -195,7 +196,10 @@ def get_max_page_number(driver):
             logging.error(f"Error in the method get_max_page_number(): {e}")
             raise e 
 
-    
+def card_link_list(url, date):
+    url_dict = {'url': url, 'date': date}
+    write_csv('/logs/card_link_list.csv', [url_dict])
+
 def get_card_data(elements, driver, date):
     """
     Get the card data from a list of elements.
@@ -221,6 +225,7 @@ def get_card_data(elements, driver, date):
     wait_time = 12
     attempts = 0
     max_attempts = 3
+
     # iterate over each element and click on it
     while attempts < max_attempts:
         for i in range(len(elements)):
@@ -231,11 +236,20 @@ def get_card_data(elements, driver, date):
                 wait = WebDriverWait(driver, wait_time)
                 elements = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.search-result__content > a")))
                 
-                elements = driver.find_elements(By.CSS_SELECTOR, "div.search-result__content > a")
+                #elements = driver.find_elements(By.CSS_SELECTOR, "div.search-result__content > a")
+
+                # check if link has already been scraped
+                df = pd.DataFrame('/logs/card_link_list.csv')
+                df = df[df['date'] == date]
+                list_of_values = pd.Series(df['url'])
+                if elements[i].get_attribute('href') in list_of_values:
+                    logging.info(f"Link {elements[i].get_attribute('href')} has already been scraped.")
+                    continue
+
 
                 # click on the element
                 elements[i].click()
-                
+
                 # Perform the operations you want on the new page
                 time.sleep(wait_time)
 
@@ -288,6 +302,10 @@ def get_card_data(elements, driver, date):
                     card[price_name] = price_value
                 
                 card_list.append(card) # add the dictionary containing all of the card data to the card_list variable 
+
+                # save link of the element
+                card_link=elements[i].get_attribute('href')
+                card_link_list(url=card_link, date=date)
 
                 # navigate back to the original page
                 driver.back()

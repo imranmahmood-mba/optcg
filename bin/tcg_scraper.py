@@ -32,6 +32,7 @@ def main():
         for page in page_nums:
             url = f"https://www.tcgplayer.com/search/one-piece-card-game/product?productLineName=one-piece-card-game&page={page}&view=grid&ProductTypeName=Cards"
             elements = tcg.download_elements_from_webpage(driver, url=url) # get the webpage elements to scrape
+            print("tcg", elements)
             card_data = tcg.get_card_data(elements, driver, date_column) # scrape card data from page
             tcg.write_csv(file_path, card_data)
         # Validate the data 
