@@ -239,7 +239,7 @@ def get_card_data(elements, driver, date):
                 #elements = driver.find_elements(By.CSS_SELECTOR, "div.search-result__content > a")
 
                 # check if link has already been scraped
-                df = pd.DataFrame('/logs/card_link_list.csv')
+                df = pd.read_csv('/logs/card_link_list.csv')
                 df = df[df['date'] == date]
                 list_of_values = pd.Series(df['url'])
                 if elements[i].get_attribute('href') in list_of_values:
