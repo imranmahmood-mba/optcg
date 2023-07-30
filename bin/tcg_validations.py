@@ -16,8 +16,7 @@ class DataFrameValidator:
             logging.info(f"The DataFrame Schema Validation...")
             sch = self.df.info()
             logging.info(f"The DataFrame schema is: ")
-            for i in sch.iterrows():
-                logging.info(f"\t{i}")
+            logging.info(sch)
         except Exception as e:
             logging.error("Error in the method - df_show_schema(). Please check the Stack Trace. " + str(e))
             raise e
@@ -57,9 +56,8 @@ class DataFrameValidator:
             null_count_dict = {}
             # Count nulls in each column
             null_counts = self.df.isnull().sum()
-
             # Print the count for each column
-            for column, null_count in null_counts.iteritems():
+            for column, null_count in null_counts.items():
                 null_count_dict[column] = null_count
         except Exception as e:
             logging.error(f"There is an issue with the method count_nulls(): {e}")

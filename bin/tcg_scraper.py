@@ -51,6 +51,7 @@ def main():
         logging.info("Removing duplicates...")
         df = df.drop_duplicates()
         logging.info("Duplicates removed...")
+        df.to_csv(data_file_path, index=False, if_exists='replace')
 
         # once data is scraped, load files to s3 
         #logging.info("Loading data into s3 bucket...")
