@@ -5,7 +5,14 @@ import os
 import logging
 import logging.config
 
-logging.config.fileConfig(fname='util/logging_to_file.conf')
+# Get the absolute directory of the current script
+abs_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the absolute path to the logging configuration file
+logging_config_path = os.path.join(abs_dir, '..', 'util', 'logging_to_file.conf')
+
+logging.config.fileConfig(fname=logging_config_path)
+
 logger = logging.getLogger(__name__)
 
 def upload_file(file_name, bucket, object_name=None):

@@ -6,8 +6,13 @@ import logging.config
 from upload_to_s3 import upload_file
 import tcg_validations as vtcg
 
-# Load the Logging Configuration File
-logging.config.fileConfig(fname='util/logging_to_file.conf')
+# Get the absolute directory of the current script
+abs_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the absolute path to the logging configuration file
+logging_config_path = os.path.join(abs_dir, '..', 'util', 'logging_to_file.conf')
+
+logging.config.fileConfig(fname=logging_config_path)
 
 # Get the custom Logger from Configuration File
 logger = logging.getLogger(__name__)
