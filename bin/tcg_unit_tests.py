@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, Mock
 from tcg_validations import DataFrameValidator
 import pandas as pd
-from tcg_scraper_functions import get_todays_date, get_max_page_number
+from tcg_scraper_functions import get_todays_date, get_max_page_number, download_elements_from_webpage
 from datetime import datetime
 
 class TestDataFrameValidator(unittest.TestCase):
@@ -78,3 +78,21 @@ class TestGetMaxPageNumber(unittest.TestCase):
             get_max_page_number(mock_driver)
 
         self.assertEqual(mock_error_logging.call_count, 3)  # assert the error is logged three times
+
+class TestDownloadElementsFromWebpage(unittest.TestCase):
+    @patch('tcg_scraper_functions.WebDriverWait')
+    @patch('tcg_scraper_functions.EC.presence_of_all_elements_located')
+    @patch('logging.info')
+    @patch('logging.error')
+    def test_download_elements_from_webpage(self, mock_error_logging, mock_info_logging, mock_presence, mock_wait):
+        mock_url = Mock()
+        mock_driver = Mock()
+        mock_elements = mock_wait.return_value.until.return_value = [Mock(text='web elements')]
+        mock_presence.return_value = "css_selector"
+
+        result = download_elements_from_webpage(mock_driver, mock_url)
+
+        mock_wait.assert_called_with(mock_driver, 12)
+        mock_wait.return_value.until.assert_called_with("css_selector")
+        self.assertEqual(result, mock_elements)
+        
