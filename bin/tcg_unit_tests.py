@@ -4,6 +4,7 @@ from tcg_validations import DataFrameValidator
 import pandas as pd
 from tcg_scraper_functions import get_todays_date, get_max_page_number, download_elements_from_webpage
 from datetime import datetime
+from selenium.common.exceptions import TimeoutException
 
 class TestDataFrameValidator(unittest.TestCase):
     def setUp(self):
@@ -95,4 +96,14 @@ class TestDownloadElementsFromWebpage(unittest.TestCase):
         mock_wait.assert_called_with(mock_driver, 12)
         mock_wait.return_value.until.assert_called_with("css_selector")
         self.assertEqual(result, mock_elements)
-        
+    @patch('tcg_scraper_functions.WebDriverWait')
+    @patch('logging.info')
+    @patch('logging.error')
+    def test_download_elements_from_webpage_exception(self, mock_error_logging, mock_info_logging, mock_wait):
+        mock_url = Mock()
+        mock_driver = Mock()
+        mock_wait.return_value.until.side_effect = TimeoutException('test exception')
+
+        with self.assertRaises(TimeoutException):  # assert the exception is raised
+            download_elements_from_webpage(mock_driver, mock_url)
+        self.assertEqual(mock_error_logging.call_count, 3)  # assert the error is called three times
