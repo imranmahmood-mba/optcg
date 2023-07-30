@@ -48,10 +48,11 @@ def write_csv(file_name, dict_data):
                 for dict_data in dict_data:
                     writer.writerow(dict_data)
         else: # if file does exist then append without writing the header
-            with open(file_name, 'a', newline='') as file:
-                writer = csv.DictWriter(file, fieldnames=dict_data[0].keys())
-                for dict_data in dict_data:
-                    writer.writerow(dict_data)
+            if len(dict_data) > 0:
+                with open(file_name, 'a', newline='') as file:
+                    writer = csv.DictWriter(file, fieldnames=dict_data[0].keys())
+                    for dict_data in dict_data:
+                        writer.writerow(dict_data)
     except Exception as e:
         logger.error(f'Error in the method write_csv(): {e}')
         raise e
@@ -234,7 +235,7 @@ def get_card_data(elements, driver, date):
     # Read file and get the scraped urls 
     df = pd.read_csv(scraped_cards_file_path)
     df = df[df['date'] == date]
-    list_of_values = pd.Series(df['url'])
+    list_of_values = pd.Series(df['url']).tolist()
 
     # iterate over each element and click on it
     while attempts < max_attempts:
@@ -246,7 +247,11 @@ def get_card_data(elements, driver, date):
                 
                 elements = driver.find_elements(By.CSS_SELECTOR, "div.search-result__content > a")
                 
-                card_link=elements[i].get_attribute('href')
+                card_link = elements[i].get_attribute('href')
+                match = re.search(r'.*(?=\?xid)', card_link)
+                card_link = match.group(0) if match else None
+                print(card_link)
+
                 if card_link in list_of_values:
                     logging.info(f"Link {elements[i].get_attribute('href')} has already been scraped.")
                     continue
@@ -307,7 +312,8 @@ def get_card_data(elements, driver, date):
                 card_list.append(card) # add the dictionary containing all of the card data to the card_list variable 
 
                 # save link of the element
-                url_list.append({'url':card_link, 'date':date})
+                if card_link is not None:
+                    url_list.append({'url':card_link, 'date':date})
 
                 # navigate back to the original page
                 driver.back()

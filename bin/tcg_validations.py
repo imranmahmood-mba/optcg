@@ -14,9 +14,9 @@ class DataFrameValidator:
     def df_show_schema(self):
         try:
             logging.info(f"The DataFrame Schema Validation...")
-            sch = self.df.schema.fields
+            sch = self.df.info()
             logging.info(f"The DataFrame schema is: ")
-            for i in sch:
+            for i in sch.iterrows():
                 logging.info(f"\t{i}")
         except Exception as e:
             logging.error("Error in the method - df_show_schema(). Please check the Stack Trace. " + str(e))
