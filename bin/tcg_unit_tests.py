@@ -1,10 +1,12 @@
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, MagicMock
 from tcg_validations import DataFrameValidator
 import pandas as pd
-from tcg_scraper_functions import get_todays_date, get_max_page_number, download_elements_from_webpage
+from tcg_scraper_functions import get_todays_date, get_max_page_number, download_elements_from_webpage, get_card_data
 from datetime import datetime
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.remote.webelement import WebElement
+import numpy as np
 
 class TestDataFrameValidator(unittest.TestCase):
     def setUp(self):
@@ -107,3 +109,4 @@ class TestDownloadElementsFromWebpage(unittest.TestCase):
         with self.assertRaises(TimeoutException):  # assert the exception is raised
             download_elements_from_webpage(mock_driver, mock_url)
         self.assertEqual(mock_error_logging.call_count, 3)  # assert the error is called three times
+

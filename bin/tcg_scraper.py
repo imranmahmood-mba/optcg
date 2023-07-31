@@ -29,7 +29,7 @@ def main():
         parent_dir = os.path.dirname(current_dir) # gets parent directory for saving the file
         file_date, date_column = tcg.get_todays_date() 
         data_file_path = f'{parent_dir}/output/optcg_data_{file_date}.csv'
-        url_file_path = 'logs/card_link_list.csv'
+        url_file_path = f'{parent_dir}/logs/card_link_list.csv'
 
         driver = tcg.create_driver()
         elements = tcg.download_elements_from_webpage(driver, url="https://www.tcgplayer.com/search/one-piece-card-game/product?productLineName=one-piece-card-game&page=1&view=grid&ProductTypeName=Cards")
@@ -56,7 +56,7 @@ def main():
         logging.info("Removing duplicates...")
         df = df.drop_duplicates()
         logging.info("Duplicates removed...")
-        df.to_csv(data_file_path, index=False, if_exists='replace')
+        df.to_csv(data_file_path, index=False, mode='w')
 
         # once data is scraped, load files to s3 
         #logging.info("Loading data into s3 bucket...")

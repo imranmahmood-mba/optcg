@@ -229,7 +229,9 @@ def get_card_data(elements, driver, date):
     wait_time = 10
     attempts = 0
     max_attempts = 3
-    scraped_cards_file_path = 'logs/card_link_list.csv'
+    scraped_cards_file_path = os.path.join(abs_dir, '..', 'logs', 'card_link_list.csv')
+
+    #scraped_cards_file_path = 'logs/card_link_list.csv'
 
     # check if link has already been scraped
     if not os.path.exists(scraped_cards_file_path):
@@ -251,7 +253,7 @@ def get_card_data(elements, driver, date):
                 wait = WebDriverWait(driver, wait_time)
                 elements = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.search-result__content > a")))
                 
-                elements = driver.find_elements(By.CSS_SELECTOR, "div.search-result__content > a")
+                #elements = driver.find_elements(By.CSS_SELECTOR, "div.search-result__content > a")
                 
                 card_link = elements[i].get_attribute('href')
                 match = re.search(r'.*(?=\?xid)', card_link)
