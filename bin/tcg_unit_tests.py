@@ -98,6 +98,7 @@ class TestDownloadElementsFromWebpage(unittest.TestCase):
         mock_wait.assert_called_with(mock_driver, 12)
         mock_wait.return_value.until.assert_called_with("css_selector")
         self.assertEqual(result, mock_elements)
+        
     @patch('tcg_scraper_functions.WebDriverWait')
     @patch('logging.info')
     @patch('logging.error')
